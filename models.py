@@ -23,8 +23,30 @@ class User(db.Model):
     last_name = db.Column(db.String(50))
 
     image_url = db.Column(db.String(1000
-                                    ), default='https://powerusers.microsoft.com/t5/image/serverpage/image-id/98171iCC9A58CAF1C9B5B9/image-size/large/is-moderation-mode/true?v=v2&px=999')
+                                    ), default='https://bit.ly/user_default')
 
     def __repr__(self):
         u = self
         return f'<User {u.id}, {u.first_name} {u.last_name}, profile image: {u.image_url}'
+
+    # def full_name(self):
+
+
+class Post(db.Model):
+    '''Post Model for Blogly'''
+    __tablename__ = 'posts'
+
+    id = db.Column(db.Integer,
+                   primary_key=True,
+                   autoincrement=True)
+
+    title = db.Column(db.String(100),
+                      nullable=False)
+
+    content = db.Column(db.String(2000))
+
+    created_at = db.Column(db.timestamp, nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('blogly.user_id'))
+
+    users = db.relationship('User', backref='posts')

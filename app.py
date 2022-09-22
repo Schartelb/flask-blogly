@@ -1,6 +1,6 @@
 """Blogly application."""
 from flask import Flask, request, render_template,  redirect, flash, session
-from models import db,  connect_db, User
+from models import db,  connect_db, User, Post
 
 app = Flask(__name__)
 
@@ -35,13 +35,13 @@ def add_user():
 def push_user_to_db():
     '''Adds user to db'''
     f_name = request.form["f_name"]
-    # l_name = request.form["l_name"] These are failing
-    # imageURL = request.form["image_url"]
+    l_name = request.form["l_name"]
+    imageURL = request.form["image_URL"]
 
-    # new_user = User(first_name=f_name, last_name=l_name, image_url=iconURL)
-    # db.session.add(new_user)
-    # db.session.commit()
-    return f'You added {f_name}'
+    new_user = User(first_name=f_name, last_name=l_name, image_url=imageURL)
+    db.session.add(new_user)
+    db.session.commit()
+    return redirect('/users')
 
 
 @app.route('/users/<int:user_id>')
@@ -61,16 +61,16 @@ def edit_user(user_id):
 @app.route('/users/<int:user_id>/edit', methods=['POST'])
 def apply_user_changes(user_id):
     '''Push user changes to db'''
-    user = User.query.filter_by(id=user_id)
-    if request.form['f_name']:
-        user.first_name = request.form['f_name']
-        db.session.add()
-    if request.form['l_name']:
-        user.last_name = request.form['l_name']
-        db.session.add()
-    if request.form['iconURL']:
-        user.image_url = request.form['iconURL']
-        db.session.add()
+    thisuser = User.query.filter(User.id == user_id)
+    if request.form['f_name'] != User.first_name:
+        thisuser.first_name = request.form['f_name']
+        db.session.add(thisuser)
+    if request.form['l_name'] != User.last_name:
+        thisuser.last_name = request.form['l_name']
+        db.session.add(thisuser)
+    if request.form['iconURL'] != User.image_url:
+        thisuser.image_url = request.form['imageURL']
+        db.session.add(thisuser)
     db.session.commit()
     return render_template('/users')
 
@@ -81,3 +81,57 @@ def delete_user(user_id):
     User.query.filter_by(id=user_id).delete()
     db.session.commit()
     return redirect('/users')
+
+
+@app.route('/users/<int:user_id>/posts/new')
+def add_post_form(user_id):
+    '''Add post Form'''
+    user = User.query.get_or_404(user_id)
+    return render_template('addpost.html', user=user)
+
+
+@app.route('/users/<int:user_id>/posts/new', methods=['POST'])
+def add_post_send(user_id):
+    '''Posts post post-haste'''
+    # p_title = request.form["p_title"]
+    # p_body = request.form["p_body"]
+    # new_post = Post(title=p_title, content=p_body,user_id=user_id)
+    # db.session.add(new_post)
+    # db.session.commit()
+    return "You posted that post"
+
+
+@app.route('/posts/<int:post_id>')
+def specific_post(post_id):
+    '''Specific Post information'''
+    post = Post.query.get_or_404(post_id)
+    return render_template("detail.html", post=post)
+
+
+@app.route('/posts/<int:post_id>/edit')
+def edit_post(post_id):
+    '''Edit specific post'''
+    post = Post.query.get_or_404(post_id)
+    return render_template('editpost.html', post=post)
+
+
+@app.route('/posts/<int:post_id>/edit', methods=['POST'])
+def apply_post_changes(post_id):
+    '''Push post changes to db'''
+    thispost = Post.query.filter(Post.id == post_id)
+    if request.form['p_title'] != Post.title:
+        thispost.first_name = request.form['p_title']
+        db.session.add(thispost)
+    if request.form['p_body'] != Post.content:
+        thispost.last_name = request.form['p_body']
+        db.session.add(thispost)
+    db.session.commit()
+    return render_template('/posts')
+
+
+@app.route('/posts/<int:post_id>/delete', methods=['POST'])
+def delete_post(post_id):
+    '''Delete post from db'''
+    Post.query.filter_by(id=post_id).delete()
+    db.session.commit()
+    return redirect('/')

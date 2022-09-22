@@ -3,13 +3,10 @@
 {%block content%}
 <h2>Edit User</h2>
 <form>
-    <p>First Name: <input name="f_name">{{user.first_name}}</p>
-    <p>Last Name: <input name="l_name">{{user.last_name}}</p>
-    <p>Profile Pic: <input name="iconURL">{{user.image_URL}}}</p>
-    <button type='submit' formaction="/users/{{int:user_id}}">Cancel</button>
-    <button type="submit" formaction="/users/edit" formmethod="POST">Save</button>
+    <p>First Name: <input name="f_name" value="{{user.first_name}}"></p>
+    <p>Last Name: <input name="l_name" value="{{user.last_name}}"></p>
+    <p>Profile Pic: <input name="imageURL" value="{{user.image_URL}}"></p>
+    <button type='submit' formaction="/users/{{user.id}}" formmethod='GET'>Cancel</button>
+    <button type="submit" formaction="/users/{{user.id}}/edit" formmethod="POST">Save</button>
 </form>
 {%endblock%}
-
-
-</html>
