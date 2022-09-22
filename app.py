@@ -34,35 +34,34 @@ def add_user():
 @app.route('/users/new', methods=['POST'])
 def push_user_to_db():
     '''Adds user to db'''
-    # f_name = request.form["f_name"]
-    # l_name = request.form["l_name"]
-    # iconURL = request.form["img_url"]
+    f_name = request.form["f_name"]
+    # l_name = request.form["l_name"] These are failing
+    # imageURL = request.form["image_url"]
 
     # new_user = User(first_name=f_name, last_name=l_name, image_url=iconURL)
     # db.session.add(new_user)
     # db.session.commit()
-    # redirect('/users')
-    return "YOU SENT DATA"
+    return f'You added {f_name}'
 
 
-@app.route('/users/<int:u_id>')
-def specific_user(u_id):
+@app.route('/users/<int:user_id>')
+def specific_user(user_id):
     '''Specific User information'''
-    user = User.query.get_or_404(u_id)
+    user = User.query.get_or_404(user_id)
     return render_template("detail.html", user=user)
 
 
-@app.route('/users/<int:u_id>/edit')
-def edit_user(u_id):
+@app.route('/users/<int:user_id>/edit')
+def edit_user(user_id):
     '''Edit specific user'''
-    user = User.query.get_or_404(u_id)
+    user = User.query.get_or_404(user_id)
     return render_template('edituser.html', user=user)
 
 
-@app.route('/users/<int:u_id>/edit', methods=['POST'])
-def apply_user_changes(u_id):
+@app.route('/users/<int:user_id>/edit', methods=['POST'])
+def apply_user_changes(user_id):
     '''Push user changes to db'''
-    user = User.query.filter_by(id=u_id)
+    user = User.query.filter_by(id=user_id)
     if request.form['f_name']:
         user.first_name = request.form['f_name']
         db.session.add()
@@ -76,9 +75,9 @@ def apply_user_changes(u_id):
     return render_template('/users')
 
 
-@app.route('/users/<int:u_id>/delete', methods=['POST'])
-def delete_user(u_id):
+@app.route('/users/<int:user_id>/delete', methods=['POST'])
+def delete_user(user_id):
     '''Delete user from db'''
-    User.query.filter_by(id=u_id).delete()
+    User.query.filter_by(id=user_id).delete()
     db.session.commit()
     return redirect('/users')
