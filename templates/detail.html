@@ -1,5 +1,11 @@
-<h1>{{ pet.name }}</h1>
-<p>Species: {{ pet.species }}</p>
-<p>Hunger: {{ pet.hunger }}</p>
-<p>{{ pet.name }} says {{ pet.greet() }}!</p>
+{%extends 'base.html'%}
+{%block title%}{{user.first_name}} {{user.last_name}}{%endblock%}
+{%block content%}}
+
+<h1>{{ user.first_name }} {{user.last_name}}</h1>
+<p><a href={{user.image_url}}></a></p>
+<form>
+    <button formaction="/users/{{user.id}}/edit">Edit</button>
+    <button formaction="/users/{{user.id}}/delete" formmethod='POST'>Delete</button>
+</form>
 <a href="/">Go back</a>

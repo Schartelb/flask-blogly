@@ -34,14 +34,15 @@ def add_user():
 @app.route('/users/new', methods=['POST'])
 def push_user_to_db():
     '''Adds user to db'''
-    f_name = request.form["f_name"]
-    l_name = request.form["l_name"]
-    iconURL = request.form["img_url"]
+    # f_name = request.form["f_name"]
+    # l_name = request.form["l_name"]
+    # iconURL = request.form["img_url"]
 
-    new_user = User(first_name=f_name, last_name=l_name, image_url=iconURL)
-    db.session.add(new_user)
-    db.session.commit()
-    return redirect('/users')
+    # new_user = User(first_name=f_name, last_name=l_name, image_url=iconURL)
+    # db.session.add(new_user)
+    # db.session.commit()
+    # redirect('/users')
+    return "YOU SENT DATA"
 
 
 @app.route('/users/<int:u_id>')
@@ -67,8 +68,12 @@ def apply_user_changes(u_id):
         db.session.add()
     if request.form['l_name']:
         user.last_name = request.form['l_name']
+        db.session.add()
     if request.form['iconURL']:
         user.image_url = request.form['iconURL']
+        db.session.add()
+    db.session.commit()
+    return render_template('/users')
 
 
 @app.route('/users/<int:u_id>/delete', methods=['POST'])

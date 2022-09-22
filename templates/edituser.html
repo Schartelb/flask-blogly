@@ -7,7 +7,7 @@
     <p>Last Name: <input name="l_name"></p>
     <p>Profile Pic: <input name="iconURL"></p>
     <button type='submit' formaction="/users/{{int:u_id}}">Cancel</button>
-    <button type="submit" formaction="">Save</button>
+    <button type="submit" formaction="/users/edit" formmethod="POST">Save</button>
 </form>
 {%endblock%}
 
