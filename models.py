@@ -31,7 +31,10 @@ class User(db.Model):
         u = self
         return f'<User {u.id}, {u.first_name} {u.last_name}, profile image: {u.image_url}'
 
-    # def full_name(self):
+    @property
+    def full_name(self):
+        u = self
+        return f'{u.first_name} {u.last_name}'
 
 
 class Post(db.Model):
@@ -52,4 +55,4 @@ class Post(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey(
         'blogly.id', ondelete="CASCADE"))
 
-    users = db.relationship('User', backref='posts')
+    p_users = db.relationship('User', backref='posts')

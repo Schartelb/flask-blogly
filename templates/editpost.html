@@ -2,10 +2,10 @@
 {%block title%}Edit Post{%endblock%}
 {%block content%}
 <h2>Edit Post</h2>
-<form>
+<form action="/posts/{{post.id}}/edit" method="POST">
     <p>Title: <input name="p_title" value="{{post.title}}"></p>
     <p>Content: <input name="p_body" value="{{post.content}}"></p>
     <button type='submit' formaction="/posts/{{post.id}}" formmethod='GET'>Cancel</button>
-    <button type="submit" formaction="/posts/{{post.id}}/edit" formmethod="POST">Save</button>
+    <button type="submit">Save</button>
 </form>
 {%endblock%}

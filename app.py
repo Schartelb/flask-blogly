@@ -13,9 +13,10 @@ connect_db(app)
 
 
 @app.route('/')
-def list_users():
-    '''Shows user list from db'''
-    return redirect('/users')
+def home_page():
+    '''Shows post list from db'''
+    posts = Post.query.all()
+    return render_template('home.html', all_posts=posts)
 
 
 @app.route('/users')
@@ -66,17 +67,14 @@ def apply_user_changes(user_id):
     if request.form['f_name'] != User.first_name:
         thisuser.first_name = request.form['f_name']
         db.session.add(thisuser)
-        print('f_name')
     if request.form['l_name'] != User.last_name:
         thisuser.last_name = request.form['l_name']
         db.session.add(thisuser)
-        print('l_name')
-    if request.form['iconURL'] != User.image_url:
+    if request.form['imageURL'] != User.image_url:
         thisuser.image_url = request.form['imageURL']
         db.session.add(thisuser)
-        print('image')
     db.session.commit()
-    return render_template(f'/users/{user_id}')
+    return redirect(f'/users/{user_id}')
 
 
 @app.route('/users/<int:user_id>/delete', methods=['POST'])
@@ -122,15 +120,15 @@ def edit_post(post_id):
 @app.route('/posts/<int:post_id>/edit', methods=['POST'])
 def apply_post_changes(post_id):
     '''Push post changes to db'''
-    thispost = Post.query.filter(Post.id == post_id)
+    thispost = Post.query.get_or_404(post_id)
     if request.form['p_title'] != Post.title:
-        thispost.first_name = request.form['p_title']
+        thispost.title = request.form['p_title']
         db.session.add(thispost)
     if request.form['p_body'] != Post.content:
-        thispost.last_name = request.form['p_body']
+        thispost.content = request.form['p_body']
         db.session.add(thispost)
     db.session.commit()
-    return render_template('/posts')
+    return redirect(f'/posts/{post_id}')
 
 
 @app.route('/posts/<int:post_id>/delete', methods=['POST'])
@@ -140,4 +138,4 @@ def delete_post(post_id):
     user = this_post.user_id
     Post.query.filter_by(id=post_id).delete()
     db.session.commit()
-    return redirect(f'/users/{user}')
+    return redirect(f'/users')

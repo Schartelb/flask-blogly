@@ -1,9 +1,9 @@
 {%extends 'base.html'%}
-{%block title%}{{user.first_name}} {{user.last_name}}{%endblock%}
-{%block content%}}
+{%block title%}{{user.full_name}}{%endblock%}
+{%block content%}
 
-<h1>{{ user.first_name }} {{user.last_name}}</h1>
-<p><img src={{user.image_url}} alt='{{user.first_name}} {{user.last_name}}' height="200"></p>
+<h1>{{user.full_name()}}</h1>
+<p><img src={{user.image_url}} alt='{{user.full_name}}' height="200"></p>
 <form>
     <button formaction="/users/{{user.id}}/edit" formmethod="GET">Edit</button>
     <button formaction="/users/{{user.id}}/delete" formmethod='POST'>Delete</button>
