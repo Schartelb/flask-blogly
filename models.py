@@ -11,6 +11,9 @@ def connect_db(app):
     db.init_app(app)
 
 
+user_default = 'https://bit.ly/user_default'
+
+
 class User(db.Model):
     '''Model for Users'''
     __tablename__ = 'blogly'
@@ -25,7 +28,7 @@ class User(db.Model):
     last_name = db.Column(db.String(50))
 
     image_url = db.Column(db.String(1000
-                                    ), default='https://bit.ly/user_default')
+                                    ), default=user_default)
 
     def __repr__(self):
         u = self
@@ -50,7 +53,8 @@ class Post(db.Model):
 
     content = db.Column(db.String(2000))
 
-    created_at = db.Column(db.DateTime(), nullable=False)
+    created_at = db.Column(db.DateTime, nullable=False,
+                           default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey(
         'blogly.id', ondelete="CASCADE"))
