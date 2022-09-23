@@ -23,9 +23,9 @@ db.session.add(fred)
 db.session.commit()
 
 # Add posts
-welcome = Post(title='Welcome!', content='Welcome to the Blogly!')
+welcome = Post(title='Welcome!', content='Welcome to the Blogly!', user_id=1)
 add_post = Post(title='Adding Posts',
-                content='Add and Edit posts to your liking!')
+                content='Add and Edit posts to your liking!', user_id=2)
 
 # Add new posts to session, so they'll persist
 db.session.add(welcome)
