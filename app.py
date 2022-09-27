@@ -129,6 +129,9 @@ def edit_post(post_id):
 def apply_post_changes(post_id):
     """Push post changes to db"""
     thispost = Post.query.get_or_404(post_id)
+    for tag in thispost.posttags:
+        PostTag.query(tag.id).delete()
+    db.session.commit()
     if request.form['p_title'] != Post.title:
         thispost.title = request.form['p_title']
     if request.form['p_body'] != Post.content:
@@ -200,7 +203,7 @@ def apply_tag_changes(tag_id):
     return redirect(f'/tags')
 
 
-@app.route('/tag/<int:tag_id>/delete', methods=['POST'])
+@app.route('/tags/<int:tag_id>/delete', methods=['POST'])
 def delete_tag(tag_id):
     """Delete tag from db"""
     Tag.query.filter_by(id=tag_id).delete()
