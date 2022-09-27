@@ -103,7 +103,7 @@ def add_post_send(user_id):
     new_post = Post(title=p_title, content=p_body, user_id=user_id)
     for tag in tags:
         if tag.name in request.form:
-            new_post.posttags.append(tag)
+            new_post.poststags.append(tag)
     db.session.add(new_post)
     db.session.commit()
     return redirect(f'/users/{user_id}')
@@ -113,7 +113,7 @@ def add_post_send(user_id):
 def specific_post(post_id):
     """Specific Post information"""
     post = Post.query.get_or_404(post_id)
-    tags = post.posttags
+    tags = post.poststags
     return render_template("postdetail.html", post=post, tags=tags)
 
 
@@ -129,8 +129,8 @@ def edit_post(post_id):
 def apply_post_changes(post_id):
     """Push post changes to db"""
     thispost = Post.query.get_or_404(post_id)
-    for tag in thispost.posttags:
-        PostTag.query(tag.id).delete()
+    for tag in thispost.poststags:
+        PostTag.query.get((tag.id, thispost.id)).delete()
     db.session.commit()
     if request.form['p_title'] != Post.title:
         thispost.title = request.form['p_title']
@@ -139,7 +139,7 @@ def apply_post_changes(post_id):
     tags = Tag.query.all()
     for tag in tags:
         if tag.name in request.form:
-            thispost.posttags.append(tag)
+            thispost.poststags.append(tag)
     db.session.add(thispost)
     db.session.commit()
     return redirect(f'/posts/{post_id}')
@@ -166,7 +166,7 @@ def all_tags():
 def tag_detail(tag_id):
     """Retrieve all Posts for Tag ID"""
     tag = Tag.query.get_or_404(tag_id)
-    posts = tag.posts
+    posts = tag.taggedposts
     return render_template('tagdetail.html', tag=tag, posts=posts)
 
 
