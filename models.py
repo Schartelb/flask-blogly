@@ -30,6 +30,9 @@ class User(db.Model):
     image_url = db.Column(db.String(1000
                                     ), default=user_default)
 
+    posts = db.relationship("Post", backref="user",
+                            cascade="all, delete-orphan")
+
     def __repr__(self):
         u = self
         return f'<User {u.id}, {u.first_name} {u.last_name}, profile image: {u.image_url}'
@@ -57,14 +60,10 @@ class Post(db.Model):
                            default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey(
-        'blogly.id', ondelete="CASCADE"))
-
-    p_user = db.relationship('User', backref='posts')
+        'blogly.id', nullable=False))
 
     posttags = db.relationship('Tag',
                                secondary='posttags', backref='posts')
-
-    tags = db.relationship('PostTag')
 
 
 class Tag(db.Model):
@@ -75,6 +74,10 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(15), nullable=False, unique=True)
+    posts = db.relationship('Post',
+                            secondary="posts_tags",
+                            cascade="all,delete",
+                            backref="tags",)
 
 
 class PostTag(db.Model):
@@ -83,8 +86,9 @@ class PostTag(db.Model):
     __tablename__ = 'posttags'
 
     post_id = db.Column(db.Integer,
-                        db.ForeignKey('posts.id', ondelete="CASCADE"),
+                        db.ForeignKey('posts.id'),
                         primary_key=True)
+
     tag_id = db.Column(db.Integer,
-                       db.ForeignKey('tags.id', ondelete='CASCADE'),
+                       db.ForeignKey('tags.id'),
                        primary_key=True)
