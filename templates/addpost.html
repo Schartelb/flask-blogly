@@ -5,6 +5,13 @@
 <form action="/users/{{user.id}}/posts/new" method="POST">
     <p>Title: <input name="p_title"></p>
     <p>Content:<br> <input name="p_body"></p>
+
+    <ul>Tags:
+        {%for tag in tags%}
+        <label for="{{tag.name}}">{{tag.name}}</label>
+        <input type="checkbox" name="{{tag.name}}">
+        {%endfor%}
+    </ul>
     <button type="submit">Post</button>
     <button formaction="/users" formmethod="GET">Cancel</button>
 </form>

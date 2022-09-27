@@ -4,6 +4,7 @@
 
 <h2>Blogly Home</h2>
 <a href="/users" method="GET">User List</a>
+<a href="/tags" method="GET">Tag List</a>
 <ul>
     {% for post in all_posts%}
     <ul>
@@ -11,8 +12,13 @@
             <h3><a href="/posts/{{post.id}}">{{post.title}}</a></h4>
         </li>
 
-        <h5>by <a href="/users/{{post.user_id}}">{{post.p_users.first_name}} {{post.p_users.last_name}}</a></h5>
+        <h5>by <a href="/users/{{post.user_id}}">{{post.p_user.first_name}} {{post.p_user.last_name}}</a></h5>
         {{post.created_at}}
+        <p>Tags:
+            {% for tag in post.posttags%}
+            {{tag.name}}
+            {%endfor%}
+        </p>
 
     </ul>
     {% endfor %}

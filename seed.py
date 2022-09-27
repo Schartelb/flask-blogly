@@ -1,4 +1,4 @@
-from models import User, Post, db
+from models import User, Post, Tag, db
 from app import app
 
 # Create all tables
@@ -32,4 +32,13 @@ db.session.add(welcome)
 db.session.add(add_post)
 
 # Commit--to save!
+db.session.commit()
+
+# Create tags for start work
+tag = Tag(name="fun")
+tag2 = Tag(name="serious")
+
+db.session.add(tag)
+db.session.add(tag2)
+
 db.session.commit()

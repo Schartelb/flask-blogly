@@ -5,6 +5,15 @@
 <form action="/posts/{{post.id}}/edit" method="POST">
     <p>Title: <input name="p_title" value="{{post.title}}"></p>
     <p>Content: <input name="p_body" value="{{post.content}}"></p>
+    <ul>Tags:
+        {%for tag in tags%}
+        <!-- need to add checked/not logic -->
+        <li>
+            <label for="{{tag.name}}">{{tag.name}}</label>
+            <input type="checkbox" name="{{tag.name}}">
+        </li>
+        {%endfor%}
+    </ul>
     <button type='submit' formaction="/posts/{{post.id}}" formmethod='GET'>Cancel</button>
     <button type="submit">Save</button>
 </form>
