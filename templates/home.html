@@ -16,7 +16,7 @@
         {{post.created_at}}
         <p>Tags:
             {% for tag in post.posttags%}
-            {{tag.name}}
+            <a href="/tags/{{tag.id}}">{{tag.name}}</a>
             {%endfor%}
         </p>
 

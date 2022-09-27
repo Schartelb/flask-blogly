@@ -102,8 +102,8 @@ def add_post_send(user_id):
     tags = Tag.query.all()
     new_post = Post(title=p_title, content=p_body, user_id=user_id)
     for tag in tags:
-        if tag in request.form:
-            new_post.tags.append(tag)
+        if tag.name in request.form:
+            new_post.posttags.append(tag)
     db.session.add(new_post)
     db.session.commit()
     return redirect(f'/users/{user_id}')
@@ -135,8 +135,8 @@ def apply_post_changes(post_id):
         thispost.content = request.form['p_body']
     tags = Tag.query.all()
     for tag in tags:
-        if tag in request.form:
-            thispost.tags.append(tag)
+        if tag.name in request.form:
+            thispost.posttags.append(tag)
     db.session.add(thispost)
     db.session.commit()
     return redirect(f'/posts/{post_id}')
@@ -197,7 +197,7 @@ def apply_tag_changes(tag_id):
     tag.name = request.form['t_name']
     db.session.add(tag)
     db.session.commit()
-    return redirect(f'/tags/')
+    return redirect(f'/tags')
 
 
 @app.route('/tag/<int:tag_id>/delete', methods=['POST'])
