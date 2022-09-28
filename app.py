@@ -38,7 +38,8 @@ def push_user_to_db():
     """Adds user to db"""
     f_name = request.form["f_name"]
     l_name = request.form["l_name"]
-    imageURL = request.form["image_URL"]
+    # allows default to push into Table
+    imageURL = request.form["image_URL"] or None
 
     new_user = User(first_name=f_name, last_name=l_name, image_url=imageURL)
     db.session.add(new_user)
@@ -65,15 +66,10 @@ def edit_user(user_id):
 def apply_user_changes(user_id):
     """Push user changes to db"""
     thisuser = User.query.get_or_404(user_id)
-    if request.form['f_name'] != User.first_name:
-        thisuser.first_name = request.form['f_name']
-        db.session.add(thisuser)
-    if request.form['l_name'] != User.last_name:
-        thisuser.last_name = request.form['l_name']
-        db.session.add(thisuser)
-    if request.form['imageURL'] != User.image_url:
-        thisuser.image_url = request.form['imageURL']
-        db.session.add(thisuser)
+    thisuser.first_name = request.form['f_name']
+    thisuser.last_name = request.form['l_name']
+    thisuser.image_url = request.form['imageURL']
+    db.session.add(thisuser)
     db.session.commit()
     return redirect(f'/users/{user_id}')
 
@@ -84,6 +80,9 @@ def delete_user(user_id):
     User.query.filter_by(id=user_id).delete()
     db.session.commit()
     return redirect('/users')
+
+############################################
+# Post Routes
 
 
 @app.route('/users/<int:user_id>/posts/new')
@@ -129,17 +128,12 @@ def edit_post(post_id):
 def apply_post_changes(post_id):
     """Push post changes to db"""
     thispost = Post.query.get_or_404(post_id)
-    for tag in thispost.poststags:
-        PostTag.query.get((tag.id, thispost.id)).delete()
-    db.session.commit()
     if request.form['p_title'] != Post.title:
         thispost.title = request.form['p_title']
     if request.form['p_body'] != Post.content:
         thispost.content = request.form['p_body']
-    tags = Tag.query.all()
-    for tag in tags:
-        if tag.name in request.form:
-            thispost.poststags.append(tag)
+    tag_ids = [int(num) for num in request.form.getlist("tags")]
+    thispost.poststags = Tag.query.filter(Tag.id.in_(tag_ids)).all()
     db.session.add(thispost)
     db.session.commit()
     return redirect(f'/posts/{post_id}')
@@ -149,10 +143,12 @@ def apply_post_changes(post_id):
 def delete_post(post_id):
     """Delete post from db"""
     this_post = Post.query.get_or_404(post_id)
-    user = this_post.user_id
-    Post.query.filter_by(id=post_id).delete()
+    db.session.delete(this_post)
     db.session.commit()
     return redirect(f'/users')
+
+#####################################################
+# Tag Routes
 
 
 @app.route('/tags')
@@ -206,6 +202,7 @@ def apply_tag_changes(tag_id):
 @app.route('/tags/<int:tag_id>/delete', methods=['POST'])
 def delete_tag(tag_id):
     """Delete tag from db"""
-    Tag.query.filter_by(id=tag_id).delete()
+    tag = Tag.query.get_or_404(tag_id)
+    db.session.delete(tag)
     db.session.commit()
     return redirect(f'/tags')

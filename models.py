@@ -16,7 +16,7 @@ user_default = 'https://bit.ly/user_default'
 
 class User(db.Model):
     '''Model for Users'''
-    __tablename__ = 'blogly'
+    __tablename__ = 'users'
 
     id = db.Column(db.Integer,
                    primary_key=True,
@@ -30,7 +30,7 @@ class User(db.Model):
     image_url = db.Column(db.String(1000
                                     ), default=user_default)
 
-    posts = db.relationship("Post", backref="user",
+    posts = db.relationship("Post", backref="users",
                             cascade="all, delete-orphan")
 
     def __repr__(self):
@@ -39,7 +39,7 @@ class User(db.Model):
 
     @property
     def full_name(self):
-        u = self
+        u = self  # unnecessary
         return f'{u.first_name} {u.last_name}'
 
 
@@ -54,16 +54,16 @@ class Post(db.Model):
     title = db.Column(db.String(100),
                       nullable=False)
 
-    content = db.Column(db.String(2000))
+    content = db.Column(db.Text, nullable=False)
 
     created_at = db.Column(db.DateTime, nullable=False,
-                           default=datetime.now)
+                           default=datetime.now)  # Solution shows datetime.datetime.now which didn't work
 
-    user_id = db.Column(db.Integer, db.ForeignKey(
-        'blogly.id', nullable=False))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
 
-    posttags = db.relationship('Tag',
-                               secondary='posttags', backref='posts')
+    def __repr__(self):
+        p = self
+        return f'<Post:{p.title}, {p.content}  by {p.users.full_name}'
 
 
 class Tag(db.Model):
@@ -74,10 +74,11 @@ class Tag(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
 
     name = db.Column(db.String(15), nullable=False, unique=True)
-    posts = db.relationship('Post',
-                            secondary="posts_tags",
-                            cascade="all,delete",
-                            backref="tags",)
+
+    taggedposts = db.relationship('Post',
+                                  secondary="posttags",
+                                  # cascade="all,delete",  # Not sure why this has the octothorpe which makes it a comment?
+                                  backref="poststags",)
 
 
 class PostTag(db.Model):
@@ -85,10 +86,6 @@ class PostTag(db.Model):
 
     __tablename__ = 'posttags'
 
-    post_id = db.Column(db.Integer,
-                        db.ForeignKey('posts.id'),
-                        primary_key=True)
-
-    tag_id = db.Column(db.Integer,
-                       db.ForeignKey('tags.id'),
-                       primary_key=True)
+    post_id = db.Column(db.Integer, db.ForeignKey(
+        'posts.id'), primary_key=True)
+    tag_id = db.Column(db.Integer, db.ForeignKey('tags.id'), primary_key=True)
